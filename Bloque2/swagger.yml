@@ -1,0 +1,587 @@
+openapi: 3.0.4
+info:
+  title: Usuarios y pólizas
+  contact:
+    email: iisla@minsait.com
+  version: 1.0.0
+servers:
+  - description: Local
+    url: http://localhost:8000
+tags:
+  - name: Usuarios
+    description: Consulta, creación y gestión de usuarios
+  - name: Pólizas
+    description: Consulta, altas y bajas, y modificaciones de pólizas
+paths:
+  /users:
+    post:
+      tags:
+        - Usuarios
+      summary: Crear usuario
+      description: Crear un usuario por primera vez.
+      operationId: create_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+        '400':
+          description: Bad Request
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - users:write
+          - users:read
+    get:
+      tags:
+        - Usuarios
+      summary: Listar usuarios
+      description: Listar usuarios.
+      operationId: list_users
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          description: Cuantos elementos se han saltado de la lista.
+          schema:
+            $ref: '#/components/schemas/PaginationOffset'
+        - name: limit
+          in: query
+          required: false
+          description: Cuantos elementos se devuelven.
+          schema:
+            $ref: '#/components/schemas/PaginationLimit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginationResponse'
+                  - properties:
+                      data:
+                        items:
+                          $ref: '#/components/schemas/ListUsersResponse'
+        '400':
+          description: Bad Request
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - users:write
+          - users:read
+  /users/{user_id}:
+    put:
+      tags:
+        - Usuarios
+      summary: Actualizar usuario
+      description: Actualizar los datos del usuario.
+      operationId: update_user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - users:write
+          - users:read
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener usuario
+      description: Obtener un usuario por su identificador.
+      operationId: get_user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - users:read
+    delete:
+      tags:
+        - Usuarios
+      summary: Baja de usuario
+      description: Causar baja de un usuario. El usuario no está disponible para consulta pero se almacenan por trazabilidad.
+      operationId: delete_user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        '200':
+          description: OK
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - users:write
+          - users:read
+  /policies:
+    post:
+      tags:
+        - Pólizas
+      summary: Crear póliza
+      description: Crear una póliza para un usuario.
+      operationId: create_policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePolicyRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePolicyResponse'
+        '400':
+          description: Bad Request
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - policies:write
+          - policies:read
+    get:
+      tags:
+        - Pólizas
+      summary: Listar pólizas
+      description: Listar pólizas de seguros.
+      operationId: list_policies
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          description: Cuantos elementos se han saltado de la lista.
+          schema:
+            $ref: '#/components/schemas/PaginationOffset'
+        - name: limit
+          in: query
+          required: false
+          description: Cuantos elementos se devuelven.
+          schema:
+            $ref: '#/components/schemas/PaginationLimit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginationResponse'
+                  - properties:
+                      data:
+                        items:
+                          $ref: '#/components/schemas/ListPoliciesResponse'
+        '400':
+          description: Bad Request
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - policies:write
+          - policies:read
+  /policies/{policy_id}:
+    put:
+      tags:
+        - Pólizas
+      summary: Actualizar póliza
+      description: Actualizar póliza de seguro.
+      operationId: update_policy
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PolicyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePolicyRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+        '400':
+          description: Bad Request
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - policies:write
+          - policies:read
+    get:
+      tags:
+        - Pólizas
+      summary: Obtener póliza
+      description: Obtener una póliza por su identificador.
+      operationId: get_policy
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PolicyId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPolicyResponse'
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - policies:read
+    delete:
+      tags:
+        - Pólizas
+      summary: Baja de póliza
+      description: Causar baja de una póliza. La póliza no está disponible para consulta pero se almacenan por trazabilidad.
+      operationId: delete_policy
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PolicyId'
+      responses:
+        '200':
+          description: OK
+        '422':
+          description: Invalid Parameters
+        '5XX':
+          description: Internal Server Error
+      security:
+        - oauth:
+          - policies:write
+          - policies:read
+components:
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:8000/oauth/
+          scopes:
+            "users:read": Consultar usuarios
+            "users:write": Crear, modificar y eliminar usuarios
+            "policies:read": Consultar pólizas de seguros
+            "policies:write": Crear, modificar y eliminar pólizas de seguros
+  schemas:
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - surname
+        - email
+        - password
+      properties:
+        name:
+          $ref: '#/components/schemas/UserName'
+        surname:
+          $ref: '#/components/schemas/UserSurname'
+        email:
+          $ref: '#/components/schemas/UserEmail'
+        password:
+          $ref: '#/components/schemas/UserPassword'
+    CreateUserResponse:
+      type: object
+      properties:
+        id: 
+          $ref: '#/components/schemas/UserId'
+        created_at:
+          $ref: '#/components/schemas/UserCreatedAt'
+    UpdateUserRequest:
+      type: object
+      required:
+        - name
+        - surname
+        - email
+        - password
+      properties:
+        name:
+          $ref: '#/components/schemas/UserName'
+        surname:
+          $ref: '#/components/schemas/UserSurname'
+        email:
+          $ref: '#/components/schemas/UserEmail'
+        password:
+          $ref: '#/components/schemas/UserPassword'
+    GetUserResponse:
+      type: object
+      required:
+        - name
+        - surname
+        - email
+        - password
+        - created_at
+      properties:
+        name:
+          $ref: '#/components/schemas/UserName'
+        surname:
+          $ref: '#/components/schemas/UserSurname'
+        email:
+          $ref: '#/components/schemas/UserEmail'
+        created_at:
+          $ref: '#/components/schemas/UserCreatedAt'
+        last_access_at:
+          $ref: '#/components/schemas/UserLastAccessAt'
+    ListUsersResponse:
+      type: object
+      required:
+        - id
+        - name
+        - surname
+        - email
+        - password
+        - created_at
+      properties:
+        id: 
+          $ref: '#/components/schemas/UserId'
+        name:
+          $ref: '#/components/schemas/UserName'
+        surname:
+          $ref: '#/components/schemas/UserSurname'
+        email:
+          $ref: '#/components/schemas/UserEmail'
+        created_at:
+          $ref: '#/components/schemas/UserCreatedAt'
+        last_access_at:
+          $ref: '#/components/schemas/UserLastAccessAt'
+    CreatePolicyRequest:
+      type: object
+      required:
+        - modality
+        - premium
+        - owner
+      properties:
+        modality:
+          $ref: '#/components/schemas/PolicyModality'
+        premium:
+          $ref: '#/components/schemas/PolicyPremium'
+        owner:
+          $ref: '#/components/schemas/PolicyOwner'
+    CreatePolicyResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/PolicyId'
+    UpdatePolicyRequest:
+      type: object
+      required:
+        - modality
+        - premium
+        - owner
+      properties:
+        modality:
+          $ref: '#/components/schemas/PolicyModality'
+        premium:
+          $ref: '#/components/schemas/PolicyPremium'
+        owner:
+          $ref: '#/components/schemas/PolicyOwner'
+    GetPolicyResponse:
+      type: object
+      required:
+        - modality
+        - premium
+        - owner
+      properties:
+        modality:
+          $ref: '#/components/schemas/PolicyModality'
+        premium:
+          $ref: '#/components/schemas/PolicyPremium'
+        owner:
+          $ref: '#/components/schemas/PolicyOwner'
+    ListPoliciesResponse:
+      type: object
+      required:
+        - id
+        - modality
+        - premium
+        - owner
+      properties:
+        id: 
+          $ref: '#/components/schemas/PolicyId'
+        modality:
+          $ref: '#/components/schemas/PolicyModality'
+        premium:
+          $ref: '#/components/schemas/PolicyPremium'
+        owner:
+          $ref: '#/components/schemas/PolicyOwner'
+    UserId:
+      allOf:
+        - $ref: '#/components/schemas/Id'
+        - description: El identificador único del usuario.
+          example: 83452
+    UserName:
+      type: string
+      description: El nombre del usuario.
+      minLength: 1
+      maxLength: 100
+      example: Nacho
+    UserSurname:
+      type: string
+      description: Los apellidos del usuario.
+      minLength: 1
+      maxLength: 200
+      example: De Isla Santos
+    UserEmail:
+      type: string
+      format: email
+      pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+      minLength: 6
+      maxLength: 255
+      description: El correo electrónico del usuario.
+      example: iisla@minsait.com
+    UserPassword:
+      type: string
+      description: La contraseña del usuario.
+      minLength: 8
+      maxLength: 100
+      pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$
+      example: Abc1234!
+    UserCreatedAt:
+      allOf:
+        - $ref: '#/components/schemas/DateTime'
+        - description: Fecha y hora de creación del usuario.
+    UserLastAccessAt:
+      allOf:
+        - $ref: '#/components/schemas/DateTime'
+        - description: Fecha y hora de último acceso del usuario.
+    PolicyId:
+      type: string
+      minLength: 30
+      maxLength: 50
+      description: El número de pólizaa como identificador único de la poliza de seguro.
+      example: '91264908123'
+    PolicyModality:
+      type: string
+      description: La modalidad de la póliza.
+      enum:
+        - allRisk
+        - thirdParty
+        - travel
+    PolicyPremium:
+      type: number
+      description: La prima de la póliza.
+      minimum: 0
+      example: 100.50
+    PolicyOwner:
+      type: object
+      description: El usuario propietario de la póliza.
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+    Id:
+      type: number
+      minimum: 1
+    DateTime:
+      type: string
+      format: date-time
+      minLength: 24
+      maxLength: 24
+      description: Fecha y hora en formato ISO 8601.
+      example: '2025-05-01T12:00:00.000Z'
+    PaginationOffset:
+      type: number
+      minimum: 0
+      default: 0
+      description: Cuantos elementos se han saltado de la lista.
+    PaginationLimit:
+      type: number
+      description: Cuantos elementos se devuelven.
+      minimum: 1
+      maximum: 100
+      default: 10
+    PaginationResponse:
+      type: object
+      required:
+        - offset
+        - limit
+        - total_count
+        - items
+      properties:
+        offset:
+          $ref: '#/components/schemas/PaginationOffset'
+        limit:
+          $ref: '#/components/schemas/PaginationLimit'
+        total_count:
+          type: number
+          minimum: 0
+          description: Cuantos elementos hay en total.
+        data:
+          type: array
+          minItems: 0
+          uniqueItems: true
+          items:
+            type: object
