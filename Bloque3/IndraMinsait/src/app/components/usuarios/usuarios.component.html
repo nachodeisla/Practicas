@@ -1,0 +1,79 @@
+<div class="container mt-5">
+  <div class="card border-danger shadow-sm">
+    <div class="card-header bg-danger text-white">
+      <h2 class="mb-0">{{ editando ? 'Editar Usuario' : 'Crear Usuario' }}</h2>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="guardarUsuario()">
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" [(ngModel)]="nuevoUsuario.name" name="name" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Apellidos</label>
+          <input type="text" class="form-control" [(ngModel)]="nuevoUsuario.surname" name="surname" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-control" [(ngModel)]="nuevoUsuario.email" name="email" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-control" [(ngModel)]="nuevoUsuario.password" name="password" required />
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-danger">{{ editando ? 'Actualizar' : 'Crear' }}</button>
+          <button type="button" class="btn btn-secondary" (click)="resetFormulario()" *ngIf="editando">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <hr class="my-5" />
+
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar usuario..."
+      [(ngModel)]="filtroUsuario"
+    />
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-danger">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Correo Electrónico</th>
+          <th>Último Acceso</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuariosFiltrados">
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.name }}</td>
+          <td>{{ usuario.surname }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.lastAccessAt | date:'short' }}</td>
+          <td>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-warning" (click)="editarUsuario(usuario)">Editar</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="eliminarUsuario(usuario.id)">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
